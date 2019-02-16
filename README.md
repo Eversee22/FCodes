@@ -1,2 +1,2 @@
 # FCodes
-some codes writed in usual days
+Some codes writen in usual days.
