@@ -12,11 +12,11 @@
 #ifndef _XNA_COLLISION_H_
 #define _XNA_COLLISION_H_
 
-
 #include<DirectXMath.h>
 #include<DirectXCollision.h>
-//#include<DirectXPackedVector.h>
-//#include<xnamath.h>
+using namespace DirectX;
+
+#define _DECLSPEC_ALIGN_16_  __declspec(align(16))
 
 namespace XNA
 {

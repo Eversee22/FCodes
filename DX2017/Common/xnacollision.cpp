@@ -11,7 +11,8 @@
 #include <Windows.h>
 #include <cfloat>
 #include "xnacollision.h"
-using namespace DirectX;
+
+#define XMASSERT(a) assert(a)
 
 namespace XNA
 {
@@ -595,12 +596,14 @@ VOID ComputeBoundingOrientedBoxFromPoints( OrientedBox* pOut, UINT Count, const 
 
     for( UINT i = 0; i < Count; i++ )
     {
-        XMVECTOR Point = XMLoadFloat3( ( XMFLOAT3* )( ( BYTE* )pPoints + i * Stride ) ) - CenterOfMass;
+		XMVECTOR Point = XMLoadFloat3((XMFLOAT3*)((BYTE*)pPoints + i * Stride)) - CenterOfMass;
 
         XX_YY_ZZ += Point * Point;
 
-        XMVECTOR XXY = XMVectorPermute( Point, Point, PermuteXXY );
-        XMVECTOR YZZ = XMVectorPermute( Point, Point, PermuteYZZ );
+        XMVECTOR XXY = XMVectorPermute( Point, Point, 
+			PermuteXXY.i[0], PermuteXXY.i[1], PermuteXXY.i[2], PermuteXXY.i[3]);
+        XMVECTOR YZZ = XMVectorPermute( Point, Point, 
+			PermuteYZZ.i[0], PermuteYZZ.i[1], PermuteYZZ.i[2], PermuteYZZ.i[3]);
 
         XY_XZ_YZ += XXY * YZZ;
     }
@@ -1843,7 +1846,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     XMVECTOR Radius;
 
     // Axis == (1,0,0) x e0 = (0, -e0.z, e0.y)
-    Axis = XMVectorPermute( e0, -e0, Permute0W1Z0Y0X );
+    Axis = XMVectorPermute( e0, -e0, 
+		Permute0W1Z0Y0X.i[0], Permute0W1Z0Y0X.i[1], Permute0W1Z0Y0X.i[2], Permute0W1Z0Y0X.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     // p1 = XMVector3Dot( V1, Axis ); // p1 = p0;
     p2 = XMVector3Dot( TV2, Axis );
@@ -1854,7 +1858,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (1,0,0) x e1 = (0, -e1.z, e1.y)
-    Axis = XMVectorPermute( e1, -e1, Permute0W1Z0Y0X );
+    Axis = XMVectorPermute( e1, -e1, 
+		Permute0W1Z0Y0X.i[0], Permute0W1Z0Y0X.i[1], Permute0W1Z0Y0X.i[2], Permute0W1Z0Y0X.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     p1 = XMVector3Dot( TV1, Axis );
     // p2 = XMVector3Dot( V2, Axis ); // p2 = p1;
@@ -1865,7 +1870,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (1,0,0) x e2 = (0, -e2.z, e2.y)
-    Axis = XMVectorPermute( e2, -e2, Permute0W1Z0Y0X );
+    Axis = XMVectorPermute( e2, -e2, 
+		Permute0W1Z0Y0X.i[0], Permute0W1Z0Y0X.i[1], Permute0W1Z0Y0X.i[2], Permute0W1Z0Y0X.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     p1 = XMVector3Dot( TV1, Axis );
     // p2 = XMVector3Dot( V2, Axis ); // p2 = p0;
@@ -1876,7 +1882,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (0,1,0) x e0 = (e0.z, 0, -e0.x)
-    Axis = XMVectorPermute( e0, -e0, Permute0Z0W1X0Y );
+    Axis = XMVectorPermute( e0, -e0, 
+		Permute0Z0W1X0Y.i[0], Permute0Z0W1X0Y.i[1], Permute0Z0W1X0Y.i[2], Permute0Z0W1X0Y.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     // p1 = XMVector3Dot( V1, Axis ); // p1 = p0;
     p2 = XMVector3Dot( TV2, Axis );
@@ -1887,7 +1894,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (0,1,0) x e1 = (e1.z, 0, -e1.x)
-    Axis = XMVectorPermute( e1, -e1, Permute0Z0W1X0Y );
+    Axis = XMVectorPermute( e1, -e1,
+		Permute0Z0W1X0Y.i[0], Permute0Z0W1X0Y.i[1], Permute0Z0W1X0Y.i[2], Permute0Z0W1X0Y.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     p1 = XMVector3Dot( TV1, Axis );
     // p2 = XMVector3Dot( V2, Axis ); // p2 = p1;
@@ -1898,7 +1906,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (0,0,1) x e2 = (e2.z, 0, -e2.x)
-    Axis = XMVectorPermute( e2, -e2, Permute0Z0W1X0Y );
+    Axis = XMVectorPermute( e2, -e2,
+		Permute0Z0W1X0Y.i[0], Permute0Z0W1X0Y.i[1], Permute0Z0W1X0Y.i[2], Permute0Z0W1X0Y.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     p1 = XMVector3Dot( TV1, Axis );
     // p2 = XMVector3Dot( V2, Axis ); // p2 = p0;
@@ -1909,7 +1918,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (0,0,1) x e0 = (-e0.y, e0.x, 0)
-    Axis = XMVectorPermute( e0, -e0, Permute1Y0X0W0Z );
+    Axis = XMVectorPermute( e0, -e0, 
+		Permute1Y0X0W0Z.i[0], Permute1Y0X0W0Z.i[1], Permute1Y0X0W0Z.i[2], Permute1Y0X0W0Z.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     // p1 = XMVector3Dot( V1, Axis ); // p1 = p0;
     p2 = XMVector3Dot( TV2, Axis );
@@ -1920,7 +1930,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (0,0,1) x e1 = (-e1.y, e1.x, 0)
-    Axis = XMVectorPermute( e1, -e1, Permute1Y0X0W0Z );
+    Axis = XMVectorPermute( e1, -e1,
+		Permute1Y0X0W0Z.i[0], Permute1Y0X0W0Z.i[1], Permute1Y0X0W0Z.i[2], Permute1Y0X0W0Z.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     p1 = XMVector3Dot( TV1, Axis );
     // p2 = XMVector3Dot( V2, Axis ); // p2 = p1;
@@ -1931,7 +1942,8 @@ BOOL IntersectTriangleAxisAlignedBox( FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, 
     NoIntersection = XMVectorOrInt( NoIntersection, XMVectorLess( Max, -Radius ) );
 
     // Axis == (0,0,1) x e2 = (-e2.y, e2.x, 0)
-    Axis = XMVectorPermute( e2, -e2, Permute1Y0X0W0Z );
+    Axis = XMVectorPermute( e2, -e2,
+		Permute1Y0X0W0Z.i[0], Permute1Y0X0W0Z.i[1], Permute1Y0X0W0Z.i[2], Permute1Y0X0W0Z.i[3]);
     p0 = XMVector3Dot( TV0, Axis );
     p1 = XMVector3Dot( TV1, Axis );
     // p2 = XMVector3Dot( V2, Axis ); // p2 = p0;
@@ -2283,83 +2295,110 @@ BOOL IntersectOrientedBoxOrientedBox( const OrientedBox* pVolumeA, const Oriente
     // l = a(u) x b(u) = (0, -r20, r10)
     // d(A) = h(A) dot abs(0, r20, r10)
     // d(B) = h(B) dot abs(0, r02, r01)
-    d = XMVector3Dot( t, XMVectorPermute( RX0, -RX0, Permute0W1Z0Y0X ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX0, ARX0, PermuteWZYX ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR0X, AR0X, PermuteWZYX ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+	d = XMVector3Dot(t, XMVectorPermute(RX0, -RX0,
+		Permute0W1Z0Y0X.i[0], Permute0W1Z0Y0X.i[1], Permute0W1Z0Y0X.i[2], Permute0W1Z0Y0X.i[3]));
+	d_A = XMVector3Dot(h_A, XMVectorPermute(ARX0, ARX0,
+		PermuteWZYX.i[0], PermuteWZYX.i[1], PermuteWZYX.i[2], PermuteWZYX.i[3]));
+    d_B = XMVector3Dot( h_B, XMVectorPermute( AR0X, AR0X,
+		PermuteWZYX.i[0], PermuteWZYX.i[1], PermuteWZYX.i[2], PermuteWZYX.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(u) x b(v) = (0, -r21, r11)
     // d(A) = h(A) dot abs(0, r21, r11)
     // d(B) = h(B) dot abs(r02, 0, r00)
-    d = XMVector3Dot( t, XMVectorPermute( RX1, -RX1, Permute0W1Z0Y0X ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX1, ARX1, PermuteWZYX ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR0X, AR0X, PermuteZWXY ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+	d = XMVector3Dot(t, XMVectorPermute(RX1, -RX1,
+		Permute0W1Z0Y0X.i[0], Permute0W1Z0Y0X.i[1], Permute0W1Z0Y0X.i[2], Permute0W1Z0Y0X.i[3]));
+    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX1, ARX1,
+		PermuteWZYX.i[0], PermuteWZYX.i[1], PermuteWZYX.i[2], PermuteWZYX.i[3]));
+	d_B = XMVector3Dot(h_B, XMVectorPermute(AR0X, AR0X,
+		PermuteZWXY.i[0], PermuteZWXY.i[1], PermuteZWXY.i[2], PermuteZWXY.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(u) x b(w) = (0, -r22, r12)
     // d(A) = h(A) dot abs(0, r22, r12)
     // d(B) = h(B) dot abs(r01, r00, 0)
-    d = XMVector3Dot( t, XMVectorPermute( RX2, -RX2, Permute0W1Z0Y0X ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX2, ARX2, PermuteWZYX ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR0X, AR0X, PermuteYXWZ ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+    d = XMVector3Dot( t, XMVectorPermute( RX2, -RX2,
+		Permute0W1Z0Y0X.i[0], Permute0W1Z0Y0X.i[1], Permute0W1Z0Y0X.i[2], Permute0W1Z0Y0X.i[3]));
+    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX2, ARX2,
+		PermuteWZYX.i[0], PermuteWZYX.i[1], PermuteWZYX.i[2], PermuteWZYX.i[3]));
+	d_B = XMVector3Dot(h_B, XMVectorPermute(AR0X, AR0X,
+		PermuteYXWZ.i[0], PermuteYXWZ.i[1], PermuteYXWZ.i[2], PermuteYXWZ.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(v) x b(u) = (r20, 0, -r00)
     // d(A) = h(A) dot abs(r20, 0, r00)
     // d(B) = h(B) dot abs(0, r12, r11)
-    d = XMVector3Dot( t, XMVectorPermute( RX0, -RX0, Permute0Z0W1X0Y ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX0, ARX0, PermuteZWXY ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR1X, AR1X, PermuteWZYX ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+	d = XMVector3Dot(t, XMVectorPermute(RX0, -RX0,
+		Permute0Z0W1X0Y.i[0], Permute0Z0W1X0Y.i[1], Permute0Z0W1X0Y.i[2], Permute0Z0W1X0Y.i[3]));
+	d_A = XMVector3Dot(h_A, XMVectorPermute(ARX0, ARX0,
+		PermuteZWXY.i[0], PermuteZWXY.i[1], PermuteZWXY.i[2], PermuteZWXY.i[3]));
+    d_B = XMVector3Dot( h_B, XMVectorPermute( AR1X, AR1X,
+		PermuteWZYX.i[0], PermuteWZYX.i[1], PermuteWZYX.i[2], PermuteWZYX.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(v) x b(v) = (r21, 0, -r01)
     // d(A) = h(A) dot abs(r21, 0, r01)
     // d(B) = h(B) dot abs(r12, 0, r10)
-    d = XMVector3Dot( t, XMVectorPermute( RX1, -RX1, Permute0Z0W1X0Y ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX1, ARX1, PermuteZWXY ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR1X, AR1X, PermuteZWXY ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+    d = XMVector3Dot( t, XMVectorPermute( RX1, -RX1,
+		Permute0Z0W1X0Y.i[0], Permute0Z0W1X0Y.i[1], Permute0Z0W1X0Y.i[2], Permute0Z0W1X0Y.i[3]));
+    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX1, ARX1,
+		PermuteZWXY.i[0], PermuteZWXY.i[1], PermuteZWXY.i[2], PermuteZWXY.i[3]));
+    d_B = XMVector3Dot( h_B, XMVectorPermute( AR1X, AR1X,
+		PermuteZWXY.i[0], PermuteZWXY.i[1], PermuteZWXY.i[2], PermuteZWXY.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(v) x b(w) = (r22, 0, -r02)
     // d(A) = h(A) dot abs(r22, 0, r02)
     // d(B) = h(B) dot abs(r11, r10, 0)
-    d = XMVector3Dot( t, XMVectorPermute( RX2, -RX2, Permute0Z0W1X0Y ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX2, ARX2, PermuteZWXY ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR1X, AR1X, PermuteYXWZ ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+    d = XMVector3Dot( t, XMVectorPermute( RX2, -RX2,
+		Permute0Z0W1X0Y.i[0], Permute0Z0W1X0Y.i[1], Permute0Z0W1X0Y.i[2], Permute0Z0W1X0Y.i[3]));
+    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX2, ARX2,
+		PermuteZWXY.i[0], PermuteZWXY.i[1], PermuteZWXY.i[2], PermuteZWXY.i[3]));
+    d_B = XMVector3Dot( h_B, XMVectorPermute( AR1X, AR1X,
+		PermuteYXWZ.i[0], PermuteYXWZ.i[1], PermuteYXWZ.i[2], PermuteYXWZ.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(w) x b(u) = (-r10, r00, 0)
     // d(A) = h(A) dot abs(r10, r00, 0)
     // d(B) = h(B) dot abs(0, r22, r21)
-    d = XMVector3Dot( t, XMVectorPermute( RX0, -RX0, Permute1Y0X0W0Z ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX0, ARX0, PermuteYXWZ ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR2X, AR2X, PermuteWZYX ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+	d = XMVector3Dot(t, XMVectorPermute(RX0, -RX0,
+		Permute1Y0X0W0Z.i[0], Permute1Y0X0W0Z.i[1], Permute1Y0X0W0Z.i[2], Permute1Y0X0W0Z.i[3]));
+    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX0, ARX0,
+		PermuteYXWZ.i[0], PermuteYXWZ.i[1], PermuteYXWZ.i[2], PermuteYXWZ.i[3]));
+    d_B = XMVector3Dot( h_B, XMVectorPermute( AR2X, AR2X,
+		PermuteWZYX.i[0], PermuteWZYX.i[1], PermuteWZYX.i[2], PermuteWZYX.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(w) x b(v) = (-r11, r01, 0)
     // d(A) = h(A) dot abs(r11, r01, 0)
     // d(B) = h(B) dot abs(r22, 0, r20)
-    d = XMVector3Dot( t, XMVectorPermute( RX1, -RX1, Permute1Y0X0W0Z ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX1, ARX1, PermuteYXWZ ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR2X, AR2X, PermuteZWXY ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+    d = XMVector3Dot( t, XMVectorPermute( RX1, -RX1,
+		Permute1Y0X0W0Z.i[0], Permute1Y0X0W0Z.i[1], Permute1Y0X0W0Z.i[2], Permute1Y0X0W0Z.i[3]));
+    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX1, ARX1,
+		PermuteYXWZ.i[0], PermuteYXWZ.i[1], PermuteYXWZ.i[2], PermuteYXWZ.i[3]));
+    d_B = XMVector3Dot( h_B, XMVectorPermute( AR2X, AR2X,
+		PermuteZWXY.i[0], PermuteZWXY.i[1], PermuteZWXY.i[2], PermuteZWXY.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // l = a(w) x b(w) = (-r12, r02, 0)
     // d(A) = h(A) dot abs(r12, r02, 0)
     // d(B) = h(B) dot abs(r21, r20, 0)
-    d = XMVector3Dot( t, XMVectorPermute( RX2, -RX2, Permute1Y0X0W0Z ) );
-    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX2, ARX2, PermuteYXWZ ) );
-    d_B = XMVector3Dot( h_B, XMVectorPermute( AR2X, AR2X, PermuteYXWZ ) );
-    NoIntersection = XMVectorOrInt( NoIntersection, 
-                                    XMVectorGreater( XMVectorAbs(d), XMVectorAdd( d_A, d_B ) ) );
+    d = XMVector3Dot( t, XMVectorPermute( RX2, -RX2,
+		Permute1Y0X0W0Z.i[0], Permute1Y0X0W0Z.i[1], Permute1Y0X0W0Z.i[2], Permute1Y0X0W0Z.i[3]));
+    d_A = XMVector3Dot( h_A, XMVectorPermute( ARX2, ARX2,
+		PermuteYXWZ.i[0], PermuteYXWZ.i[1], PermuteYXWZ.i[2], PermuteYXWZ.i[3]));
+    d_B = XMVector3Dot( h_B, XMVectorPermute( AR2X, AR2X,
+		PermuteYXWZ.i[0], PermuteYXWZ.i[1], PermuteYXWZ.i[2], PermuteYXWZ.i[3]));
+	NoIntersection = XMVectorOrInt(NoIntersection,
+		XMVectorGreater(XMVectorAbs(d), XMVectorAdd(d_A, d_B)));
 
     // No seperating axis found, boxes must intersect.
     return XMVector4NotEqualInt( NoIntersection, XMVectorTrueInt() );
