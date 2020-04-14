@@ -13,6 +13,9 @@
 //#include <d3dx11.h>
 #include "d3dx11Effect.h"
 #include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
+#include "ScreenGrab.h"
+#include <wincodec.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include "dxerr.h"
